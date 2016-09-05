@@ -63,11 +63,10 @@ limitCols(1) = 0; %not necessary
 
 limitCols(2:end) = (limits(1:end-1,3) + limits(2:end, 2))/2;
 
-%decrease contrast slightly and find islands within the limitCols is a
-%possibillity, but I found that the score was great no matter if that was
-%done. If improvement is needed, this is a possibillity.
 
+m = size(im,1);
+n = size(im,2);
 for kk = 1:nrofsegments;
-    S{kk}= (imL == bigIslands(kk));
+    S{kk}= (rand(m,n)<0.5);
 end;
 end

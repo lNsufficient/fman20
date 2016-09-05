@@ -1,0 +1,11 @@
+clear;
+load('assignment1bases.mat')
+for basenbr = 1:3
+    for ev = 1:4
+        ei = bases{basenbr}(:,:,i);
+        image(ei);
+        imagesc(ei);
+        colormap(grey);
+        pause;
+    end 
+end

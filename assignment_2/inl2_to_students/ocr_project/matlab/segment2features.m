@@ -1,16 +1,17 @@
 function features = segment2features(I)
+features = zeros(15, 1);
 
 %Kännetecken: hur många hål bokstaven har:
-isl = bwlabel(I == 0);
+isl = bwlabel(I == 0, 4);
 islandSizes = hist(isl(isl>0), 1:max(max(isl))); %hist för strlek på öar
 [~, bgIsland] = max(islandSizes);
 islandSizes(bgIsland) = [];
 nbrisl = numel(islandSizes);
-features(6) = nbrisl;
+features(1) = nbrisl;
 %kännetecken: summan av alla dessa öar delat med summan av alla
 %bokstavspixlar
 colored = sum(sum(I));
-features(12) = sum(islandSizes)/colored;
+features(2) = sum(islandSizes)/colored;
 
 
 %Följande rader tar reda på området som är det minsta möjliga som
@@ -24,17 +25,17 @@ I = I(minRow:maxRow, minCol:maxCol);
 
 %Kännetecken, hur stor andel av pixlar som är färgade och utgör bokstaven. 
 
-features(1) = colored/numel(I);
+features(3) = colored/numel(I);
 
 %Kännetecken: hur många hål kantområden bokstaven har
-isl = bwlabel(I == 0);
+isl = bwlabel(I == 0, 4);
 islandSizes = hist(isl(isl>0), 1:max(max(isl)));
 
 islandSizeLimit = 4;
 islandSizes(islandSizes < islandSizeLimit) = [];
 nbrEdgeIsl = numel(islandSizes) -nbrisl; %nbrisl - öar inom bokstav
-features(11) = nbrEdgeIsl;
-features(13) = sum(islandSizes)/colored;
+features(4) = nbrEdgeIsl;
+features(5) = sum(islandSizes)/colored;
 %nästa kännetecken: maximalt antal streck (efter hål) på rad respektive
 %kolumn
 [i, j] = find(I);
@@ -49,7 +50,7 @@ if(~isempty(interestingDiffs))
 else 
     sameCols = 0;
 end
-features(2) = max(sameCols) + 1;
+features(6) = max(sameCols) + 1;
 
 %one more feature while i and j are sorted columnwise:
 %Kännetecken: högsta minsta höjd (W har högsta minsta höjd precis på
@@ -64,8 +65,10 @@ newCol = [1; j(2:end) - j(1:end-1)];
 %mitten) [ungefär som med fallet för "R" och högsta höjd så tillåter denna
 %att fnuttar blockerar, så att högsta höjden kan "gömmas" pga fnuttar.]
 [minmaxheight, minmaxheightcol] = min(i([newCol(2:end); 1] == 1));
+height = size(I, 1);
+width = size(I, 2);
 
-features(7:10) = [maxminheight, minmaxheight, maxminheightcol, minmaxheightcol];
+features(7:10) = [maxminheight/height, minmaxheight/height, maxminheightcol/width, minmaxheightcol/width];
 
 [i, index] = sort(i);
 j = j(index);
@@ -77,7 +80,7 @@ if(~isempty(interestingDiffs))
 else
     sameRows = 0;
 end
-features(3) = max(sameRows) + 1; %Detta var alltså antalet streck på bredden
+features(11) = max(sameRows) + 1; %Detta var alltså antalet streck på bredden
 
 
 %Nästa kännetecken, hur bred bokstaven är i ovankant och nederkant:
@@ -95,26 +98,10 @@ corners(4) = j(end);
 t = find(i == i(end), 1);
 corners(3) = j(t);
 
-height = size(I, 1);
-width = size(I, 2);
 
-features(4) = (corners(2) - corners(1) + 1)/height;
-features(5) = (corners(4) - corners(3) + 1)/height;
+
+features(12) = (corners(2) - corners(1) + 1)/height;
+features(13) = (corners(4) - corners(3) + 1)/height;
 %densitet i ovan- respektive nederkant
 features(14) = sum(I(1,:))/width;
 features(15) = sum(I(end,:))/width;
-I
-features
-disp('done')
-%features([9, 10, 12, 13]) = []
-
-
-
-
-
-
-
-
-
-
-

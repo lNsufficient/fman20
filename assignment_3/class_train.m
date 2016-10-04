@@ -31,6 +31,7 @@ for i = 1:1
 end
 %MODEL = fitcsvm(X, Y, 'Para)
 SVindex = find(abs(alpha)>TOL);
+SVindex = 1:numel(alpha);
 b = mean((alpha(SVindex)'*K(SVindex,SVindex) - Y(SVindex)));
 test = Y(SVindex).*(alpha(SVindex)'*K(SVindex,SVindex) + b)-1;
 max(test)

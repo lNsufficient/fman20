@@ -1,10 +1,11 @@
-function Y = classify(X, alpha, b, Xclass)
+function Y = classify(X, alpha, b, Xclass, G)
 %CLASSIFY Summary of this function goes here
 %   Detailed explanation goes here
 
 K = kernel(Xclass, X);
-G = alpha'*K + b;
-Y = 2*(G > 0)-1;
+Gv = alpha'*K + b;
+Gv = G(X);
+Y = 2*(Gv > 0)-1;
 
 end
 

@@ -1,7 +1,8 @@
 function [alpha, b, X] = class_train(X, Y)
 %CLASS_TRAIN Summary of this function goes here
 %   Detailed explanation goes here
-C = 2;
+C = 30;
+TOL = 1e-6;
 
 K = kernel(X, X);
 
@@ -17,9 +18,21 @@ beq = 0;
 lb = zeros(size(Y'));
 ub = C*ones(size(Y'));
 f = ones(size(Y'));
-H = (Y'*Y).*K; %outer prod, men Y är en radvektor
+H = -(Y'*Y).*K; %outer prod, men Y ï¿½r en radvektor
 
-alpha = quadprog(H,f,A,b,Aeq,beq,lb,ub);
-b = mean((alpha'*K - Y));
+fval = @(alpha) f'*alpha +1/2*alpha'*H*alpha;
+for i = 1:1
+    alpha = quadprog(-H,-f,A,b,Aeq,beq,lb,ub);
+    maxAlpha = max(alpha)
+    minAlpha = min(alpha)
+    newVal = fval(alpha);
+    C = min(max(alpha),C);
+    ub = C*ones(size(Y'));
+end
+%MODEL = fitcsvm(X, Y, 'Para)
+SVindex = find(abs(alpha)>TOL);
+b = mean((alpha(SVindex)'*K(SVindex,SVindex) - Y(SVindex)));
+test = Y(SVindex).*(alpha(SVindex)'*K(SVindex,SVindex) + b)-1;
+max(test)
 end
 

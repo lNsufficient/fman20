@@ -39,13 +39,15 @@ SVindex = 1:numel(alpha); %Borde funka att använda alla index, eftersom att
 %b beräknas enligt slide 6. Detta blir mer robust om beräkning endast görs
 %för SV, men nu har jag inte lyckats extrahera dessa, så det blir lönlöst.
 %notera att på slide 6 så g(x) = w^T*x+b. I vårt fall 
-b = mean((alpha(SVindex)'*K(SVindex,SVindex) - Y(SVindex)));
-b = mean(Y(SVindex)- alpha(SVindex)'*K(SVindex,SVindex));
+b = mean((Y(SVindex).*alpha(SVindex)'*K(SVindex,SVindex) - Y(SVindex)))
+
 %Redan här verkar något vara lurt, för alpha(SVindex)'*K(SVindex,SVindex)
 %är mycket större än 1, så Y har väldigt liten inverkan. 
 %(Jag tycker det känns som det är teckenfel på b i sliden, därav den andra raden).
 
 G =@(x) alpha(SVindex)'*kernel(X(:,SVindex),x) + b;
+G =@(x) Y(SVindex).*alpha(SVindex)'*kernel(X(:,SVindex),x) + b;
+
 test = Y(SVindex).*G(X(:,SVindex))-1; %Detta borde
 %vara 0 för alla SV
 max(test)

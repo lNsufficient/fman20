@@ -49,7 +49,7 @@ end
 % Now that we have found alpha, it's time to get w, b
 
 % Find SV's
-sv_idxs = find(abs(alph) < sv_tol);
+sv_idxs = find(abs(alph) > sv_tol);
 
 % Compute w
 X_sv      = X(:, sv_idxs);
@@ -61,7 +61,7 @@ w 		  = sum(bsxfun(@times, X_sv, alph_Y_sv), 2);
 % Compute b
 b = mean(w' * X_sv - Y_sv');
 
-test = Y_sv.*(w'*X_sv + b) - 1
+test = Y'.*(w'*X+ b) - 1
 % Return the SVM
 theta = [w; b];
 end

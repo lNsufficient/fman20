@@ -1,11 +1,6 @@
-function Y = classify(X, alpha, b, Xclass, G)
-%CLASSIFY Summary of this function goes here
-%   Detailed explanation goes here
+function [Yclass] = classify(X,g)
+%classify Klassifierar datan X med hjälp av funktionen g.
 
-K = kernel(Xclass, X);
-Gv = alpha'*K + b;
-Gv = G(X);
-Y = 2*(Gv > 0)-1;
-
+Yclass = 2*(g(X)>0)-1;
 end
 

@@ -24,7 +24,7 @@ nbrIslands = max(max(imL));
 
 islandHistogram = zeros(nbrIslands, 2);
 for i = 1:nbrIslands
-    nbrHits = sum(find(imL==i));
+    nbrHits = sum(sum(imL==i));
     islandHistogram(i,1) = i;
     islandHistogram(i,2) = nbrHits;
 end
@@ -44,11 +44,12 @@ limits = [bigIslands', zeros(length(bigIslands),4)];
 % limits = Islandnbr, leftmost, rightmost, topmost, bottommost
 % indices for pixels
 for i = bigIslands
+    currentRow = find(limits(:,1)==i);
     [I, J] = find(imL == i);
-    limits(i, 2) = min(J);
-    limits(i, 3) = max(J);
-    limits(i, 4) = min(I);
-    limits(i, 5) = max(I);
+    limits(currentRow, 2) = min(J);
+    limits(currentRow, 3) = max(J);
+    limits(currentRow, 4) = min(I);
+    limits(currentRow, 5) = max(I);
 end
 
 %try to find collumns for division of the picture. Sort after leftmost

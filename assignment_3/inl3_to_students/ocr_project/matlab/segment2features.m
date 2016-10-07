@@ -7,7 +7,7 @@ minCol = min(j);
 maxRow = max(i);
 maxCol = max(j);
 I = I(minRow:maxRow, minCol:maxCol);
-I = imresize(I, [6, 6]);
+I = imresize(I, [7, 7]);
 features = I(:);
 %Fick tips av en person att en väldigt bra feature är helt enkelt bilden.
 %Detta kunde man ju märka på uppgift faceNonFace, där featurevektorn var

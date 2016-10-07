@@ -12,7 +12,7 @@ Xt = allX;
 Yt = allY;
 
 load('ocrsegments.mat')
-Xf = zeros(36,100);
+Xf = zeros(49,100);
 for i = 1:100
     x = S{i};
     Xf(:,i) = segment2features(x);

@@ -32,7 +32,7 @@ if 1,
     for k = 1:1;
         imagesc(S{k});
         title(['Classified as class nr: ' num2str(y) ' which corresponds to the character ' upper(alfabet(y))]);
-        %disp('tryck på en tangent');
+        %disp('tryck pï¿½ en tangent');
         %pause;
     end;
 end;

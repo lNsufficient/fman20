@@ -11,12 +11,29 @@ datadir = '../datasets/short1';     % Which folder of examples are you going to 
 Xt = allX;
 Yt = allY;
 
-model = cell(26);
-for(i = 1:26)
-    Yt = 2*allY(allY==i) - 1;
-    Xt = allX;
-    model{i} = fitcsvm(Xtrain', Ytrain');
+load('ocrsegments.mat')
+Xf = zeros(15,100);
+for i = 1:100
+    x = S{i};
+    Xf(:,i) = segment2features(x);
 end
+Yf = y;
+
+Xtest = Xf;
+Ytest = Yf;
+
+model = cell(26,1);
+for(i = 1:26)
+    Yt = 2*(Ytest==i) - 1;
+    %Xt = allX;
+    model{i} = fitcsvm(Xtest', Yt');
+end
+classification_data = model;
+
+save('classification_data', 'classification_data');
+i = 2;
+ypredict = predict(model{i}, allX');
+error = mean(ypredict' ~= (2*(allY==i)-1))
 
 %In i classify skickar jag därefter alla modeller, så får alla de
 %classifiera. Den som har 1 med minst error rate vinner, och får bestämma

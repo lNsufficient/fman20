@@ -1,4 +1,4 @@
-function [alpha, b, X, G] = class_train(X, Y)
+function [alpha, b, X, G] = class_train_nonlinearSVM(X, Y)
 %CLASS_TRAIN Summary of this function goes here
 %   Detailed explanation goes here
 C = 30;
@@ -48,6 +48,7 @@ b = mean((Y(SVindex).*alpha(SVindex)'*K(SVindex,SVindex) - Y(SVindex)))
 G =@(x) alpha(SVindex)'*kernel(X(:,SVindex),x) + b;
 G =@(x) Y(SVindex).*alpha(SVindex)'*kernel(X(:,SVindex),x) + b;
 
+SVindex = find(abs(alpha)>TOL);
 test = Y(SVindex).*G(X(:,SVindex))-1; %Detta borde
 %vara 0 för alla SV
 max(test)

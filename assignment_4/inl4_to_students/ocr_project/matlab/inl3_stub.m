@@ -1,9 +1,9 @@
 alfabet = 'abcdefghijklmnopqrstuvwxyz';
-datadir = '../datasets/short1';
+datadir = '../datasets/short2';
 
 a = dir(datadir);
 
-file = 'im2';
+file = 'im9';
 
 fnamebild = [datadir filesep file '.jpg'];
 fnamefacit = [datadir filesep file '.txt'];
@@ -29,10 +29,12 @@ alfabet(y)
 %%
 if 1,
     figure(1); colormap(gray);
-    for k = 1:1;
+    for k = 3:5;
         imagesc(S{k});
+        x = segment2features(S{k});
+        y = features2class(x,classification_data);
         title(['Classified as class nr: ' num2str(y) ' which corresponds to the character ' upper(alfabet(y))]);
-        %disp('tryck på en tangent');
-        %pause;
+        %disp('tryck pï¿½ en tangent');
+        pause;
     end;
 end;

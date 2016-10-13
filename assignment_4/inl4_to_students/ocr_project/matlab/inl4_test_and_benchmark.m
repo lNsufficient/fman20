@@ -35,7 +35,7 @@ datadir = '../datasets/short1';     % Which folder of examples are you going to 
 %datadir = '../datasets/short2';     % Which folder of examples are you going to test it on
 %datadir = '../datasets/home1';     % Which folder of examples are you going to test it on
 %datadir = '../datasets/home2';     % Which folder of examples are you going to test it on
-datadir = '../datasets/home3';     % Which folder of examples are you going to test it on
+%datadir = '../datasets/home3';     % Which folder of examples are you going to test it on
 
 %% Benchmark and visualize
 mode = 0; % debug modes 

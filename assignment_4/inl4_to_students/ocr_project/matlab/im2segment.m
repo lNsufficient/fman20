@@ -39,19 +39,29 @@ bigIslands{ij} = 1:nbrIslands;
 bigIslands{ij} = setdiff(bigIslands{ij},smallIslands);
 
 end
-
-
-%merge together the segmentations:
-%First: check which islands intersect. 
-ij = 1;
-intersections = zeros(length(bigIslands{ij+1}), length(bigIslands{ij}));
-for ik = 1:length(bigIslands{ij})
-    for ik2 = 1:length(bigIslands{ij+1})
-        intersections(ik2, ik)= sum(sum((imL{ij+1} == (bigIslands{ij+1}(ik2))).*(imL{ij} == (bigIslands{ij}(ik)))));
-    end
-end
 bigIslands = bigIslands{1};
 imL = imL{1}
+
+imS = smoothmatrix(imL);
+
+imS = bwlabel(imS, 8);
+if(max(max(imS))~=5)
+    disp('imS does not have 5 islands')
+end
+histimS = hist(imS(:), 0:max(max(imS)));
+histimS(1)= [];
+smallIslandsimS = find(histimS < smallIsl);
+bigIslandsimS = 1:max(max(imS));
+bigIslandsimS = setdiff(bigIslandsimS, smallIslandsimS);
+
+%merge together the segmentation and the smoothed segmentation:
+ij = 1;
+intersections = zeros(length(bigIslands), length(bigIslandsimS));
+for ik = 1:length(bigIslands)
+    for ik2 = 1:length(bigIslandsimS)
+        intersections(ik2, ik)= sum(sum((imS == (bigIslandsimS(ik2))).*(imL == (bigIslands(ik)))));
+    end
+end
 
 nrofsegments = length(bigIslands);
 if(nrofsegments ~= 5)

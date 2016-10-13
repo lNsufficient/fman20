@@ -40,7 +40,7 @@ bigIslands{ij} = setdiff(bigIslands{ij},smallIslands);
 
 end
 bigIslands = bigIslands{1};
-imL = imL{1}
+imL = imL{1};
 
 imS = smoothmatrix(imL);
 
@@ -56,24 +56,22 @@ bigIslandsimS = setdiff(bigIslandsimS, smallIslandsimS);
 
 %merge together the segmentation and the smoothed segmentation:
 ij = 1;
-intersections = zeros(length(bigIslands), length(bigIslandsimS));
+intersections = zeros(length(bigIslandsimS), length(bigIslands));
 for ik = 1:length(bigIslands)
     for ik2 = 1:length(bigIslandsimS)
         intersections(ik2, ik)= sum(sum((imS == (bigIslandsimS(ik2))).*(imL == (bigIslands(ik)))));
     end
 end
+[newLabeled, newLabels] = matchIslands(intersections, imL, bigIslands);
 
-matchedIslands = matchIslands(intersections);
-combineIslands(intersections)
-
-nrofsegments = length(bigIslands);
+nrofsegments = length(newLabels);
 if(nrofsegments ~= 5)
     disp('Fel antal segments');
 end
 
 %find outermost pixels for each letter
 
-limits = [bigIslands', zeros(length(bigIslands),4)];
+limits = [newLabels, zeros(length(newLabels),4)];
 % limits = Islandnbr, leftmost, rightmost, topmost, bottommost
 % indices for pixels
 for i = bigIslands
@@ -92,7 +90,7 @@ limits = limits(I,:);
 
 %assuming that there is no overlap, we now know the order of the letters so
 %the limits should be easy to calculate.
-limitCols = zeros(length(bigIslands), 1);
+limitCols = zeros(length(newLabels), 1);
 limitCols(1) = 0; %not necessary
 
 limitCols(2:end) = (limits(1:end-1,3) + limits(2:end, 2))/2;
@@ -102,6 +100,6 @@ limitCols(2:end) = (limits(1:end-1,3) + limits(2:end, 2))/2;
 %done. If improvement is needed, this is a possibillity.
 
 for kk = 1:nrofsegments;
-    S{kk}= (imL == bigIslands(kk));
+    S{kk}= (newLabeled == newLabels(kk));
 end;
 end

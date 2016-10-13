@@ -12,7 +12,8 @@ Xt = allX;
 Yt = allY;
 
 load('ocrsegments.mat')
-Xf = zeros(49,100);
+x0 = segment2features(S{1});
+Xf = zeros(length(x0),100);
 for i = 1:100
     x = S{i};
     Xf(:,i) = segment2features(x);
@@ -28,6 +29,7 @@ for(i = 1:26)
     %Xt = allX;
     model{i} = fitcsvm(Xtest', Yt');
 end
+model = fitcknn(Xtest',Ytest);
 classification_data = model;
 
 save('classification_data', 'classification_data');

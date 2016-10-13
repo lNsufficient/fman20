@@ -29,7 +29,7 @@ alfabet(y)
 %%
 if 1,
     figure(1); colormap(gray);
-    for k = 3:5;
+    for k = 1:5;
         imagesc(S{k});
         x = segment2features(S{k});
         y = features2class(x,classification_data);

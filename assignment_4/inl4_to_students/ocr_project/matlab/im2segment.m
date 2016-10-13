@@ -8,9 +8,9 @@ imo = im;
 minBright = min(min(im));
 im = im - minBright;
 maxBright = max(max(im));
-
-for ij = 1:3
-limitCoeff = 1/2*0.9^(ij - 1);
+brightCoeff = 0.5;
+for ij = 1:2
+limitCoeff = 1/2*brightCoeff^(ij - 1);
 imC = (im < (maxBright*limitCoeff));
 
 %finding the letters
@@ -40,15 +40,16 @@ bigIslands{ij} = setdiff(bigIslands{ij},smallIslands);
 
 end
 
+
 %merge together the segmentations:
 %First: check which islands intersect. 
-% for ij = 1:3
-%     for ik = 1:length(bigIslands{ij})
-%         for ik2 = 1:length(bigIslands{ij+1}
-%             intersections{ij}(ik) = sum(sum((imL{ij+1}(bigIslands(ik2))>0 == (imL{ij}(bigIslands(ik))>0))));
-%         end
-%     end
-% end
+ij = 1;
+intersections = zeros(length(bigIslands{ij+1}), length(bigIslands{ij}));
+for ik = 1:length(bigIslands{ij})
+    for ik2 = 1:length(bigIslands{ij+1})
+        intersections(ik2, ik)= sum(sum((imL{ij+1} == (bigIslands{ij+1}(ik2))).*(imL{ij} == (bigIslands{ij}(ik)))));
+    end
+end
 bigIslands = bigIslands{1};
 imL = imL{1}
 

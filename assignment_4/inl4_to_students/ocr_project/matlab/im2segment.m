@@ -1,6 +1,6 @@
 function [S] = im2segment(im)
 % [S] = im2segment(im)
-
+imo = im;
 %trying to do something about the contrast. An idea is to do this in "many"
 %different ways, one which just splits at half of max brightness, one which
 %splits at the median of the whole brightness when excluding the darkest
@@ -9,14 +9,16 @@ minBright = min(min(im));
 im = im - minBright;
 maxBright = max(max(im));
 
-imC = (im < (maxBright/2));
+for ij = 1:3
+limitCoeff = 1/2*0.9^(ij - 1);
+imC = (im < (maxBright*limitCoeff));
 
 %finding the letters
-imL = bwlabel(imC,8);
+imL{ij} = bwlabel(imC,8);
 
 %try to see approx how many pixels that correspond to each island 
 %to be able to remove small islands. No small islands usually found...
-nbrIslands = max(max(imL));
+nbrIslands = max(max(imL{ij}));
 % disp(nbrIslands);
 % image(imL);
 % imagesc(imL);
@@ -24,7 +26,7 @@ nbrIslands = max(max(imL));
 
 islandHistogram = zeros(nbrIslands, 2);
 for i = 1:nbrIslands
-    nbrHits = sum(sum(imL==i));
+    nbrHits = sum(sum(imL{ij}==i));
     islandHistogram(i,1) = i;
     islandHistogram(i,2) = nbrHits;
 end
@@ -32,11 +34,28 @@ end
 smallIsl = 5;
 [smallIslands, ~] = find(islandHistogram(:,2) < smallIsl);
 
-bigIslands = 1:nbrIslands;
+bigIslands{ij} = 1:nbrIslands;
 %disp(bigIslands);
-bigIslands = setdiff(bigIslands,smallIslands);
+bigIslands{ij} = setdiff(bigIslands{ij},smallIslands);
+
+end
+
+%merge together the segmentations:
+%First: check which islands intersect. 
+% for ij = 1:3
+%     for ik = 1:length(bigIslands{ij})
+%         for ik2 = 1:length(bigIslands{ij+1}
+%             intersections{ij}(ik) = sum(sum((imL{ij+1}(bigIslands(ik2))>0 == (imL{ij}(bigIslands(ik))>0))));
+%         end
+%     end
+% end
+bigIslands = bigIslands{1};
+imL = imL{1}
 
 nrofsegments = length(bigIslands);
+if(nrofsegments ~= 5)
+    disp('Fel antal segments');
+end
 
 %find outermost pixels for each letter
 

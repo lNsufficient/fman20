@@ -1,3 +1,5 @@
 *.asv
+*.txt.swp
+*.swp
 *~
 *.zip

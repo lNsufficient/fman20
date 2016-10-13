@@ -5,14 +5,15 @@ imo = im;
 %different ways, one which just splits at half of max brightness, one which
 %splits at the median of the whole brightness when excluding the darkest
 %and brightest pixels.
+level = 255*graythresh(im);
 minBright = min(min(im));
 im = im - minBright;
 maxBright = max(max(im));
 brightCoeff = 0.5;
-for ij = 1:2
+for ij = 1:1
 limitCoeff = 1/2*brightCoeff^(ij - 1);
 imC = (im < (maxBright*limitCoeff));
-
+imC = (im < level);
 %finding the letters
 imL{ij} = bwlabel(imC,8);
 
@@ -31,7 +32,7 @@ for i = 1:nbrIslands
     islandHistogram(i,2) = nbrHits;
 end
 
-smallIsl = 5;
+smallIsl = 20;
 [smallIslands, ~] = find(islandHistogram(:,2) < smallIsl);
 
 bigIslands{ij} = 1:nbrIslands;
@@ -45,14 +46,17 @@ imL = imL{1};
 imS = smoothmatrix(imL);
 
 imS = bwlabel(imS, 8);
-if(max(max(imS))~=5)
-    disp('imS does not have 5 islands')
-end
 histimS = hist(imS(:), 0:max(max(imS)));
 histimS(1)= [];
 smallIslandsimS = find(histimS < smallIsl);
 bigIslandsimS = 1:max(max(imS));
 bigIslandsimS = setdiff(bigIslandsimS, smallIslandsimS);
+if(length(bigIslandsimS)~=5)
+    disp('imS does not have 5 islands')
+    disp(histimS);
+    disp(islandHistogram);
+end
+
 
 %merge together the segmentation and the smoothed segmentation:
 ij = 1;

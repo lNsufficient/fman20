@@ -23,13 +23,14 @@ Yf = y;
 Xtest = Xf;
 Ytest = Yf;
 
-model = cell(26,1);
+model = cell(27,1);
 for(i = 1:26)
     Yt = 2*(Ytest==i) - 1;
     %Xt = allX;
-    model{i} = fitcsvm(Xtest', Yt');
+    modeltmp = fitcsvm(Xtest', Yt');
+    model{i} = fitPosterior(modeltmp);
 end
-model = fitcknn(Xtest',Ytest);
+model{end} = fitcknn(Xtest',Ytest);
 classification_data = model;
 
 save('classification_data', 'classification_data');
@@ -45,4 +46,4 @@ for i = 1:length(Yt)
     Yr = features2class(Xtest(:,i), classification_data);
     correct= correct + (Yr == Yf(i));
 end
-error = 1 - correct/100;
+error = 1 - correct/100

@@ -63,6 +63,9 @@ for ik = 1:length(bigIslands)
     end
 end
 
+matchedIslands = matchIslands(intersections);
+combineIslands(intersections)
+
 nrofsegments = length(bigIslands);
 if(nrofsegments ~= 5)
     disp('Fel antal segments');

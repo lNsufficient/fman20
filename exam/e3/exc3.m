@@ -4,6 +4,7 @@ I = double(blood)/255;
 
 figure(4)
 clf
+subplot(2,2,1);
 imagesc(I)
 colormap('gray')
 
@@ -22,6 +23,17 @@ ys = t*sind(alpha);
 hold on;
 plot(xs, ys, 'r')
 
+t0 = 0.5; %intensitet i övre vänstra hörnet
+m = t0;
+tf = 0.86;
+k = (tf - m)/r;
+intensity_f = @(t) m+k*t;
+
+ls = sqrt(x.^2 + y.^2);
+thetas = atand(y./x);
+ts = ls.*cosd(alpha-thetas);
+intensityIm = intensity_f(ts);
+
 xt = 50;
 yt = 250;
 plot(xt,yt,'or')
@@ -34,6 +46,18 @@ xt2 = t0*cosd(alpha);
 yt2 = t0*sind(alpha);
 
 plot(xt2, yt2,'og');
+
+subplot(2,2,2)
+imagesc(intensityIm)
+colormap('gray');
+
+subplot(2,2,3)
+segmented = (I < intensityIm);
+imagesc(segmented)
+colormap('gray')
+
+
+
 gradientLine = @(x, y) a*x + b*y;  
 
 %%

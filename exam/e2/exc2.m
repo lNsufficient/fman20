@@ -82,10 +82,14 @@ colormap('gray');
 
 Ig_Max = min(max(Ig,[],2)); %the maxima for each row in Ig is at least this big.
 limit = Ig_Max*0.4;
-Ig_local_cut = Ig_local.*(Ig>limit);
+Ig_local_cut = local_maxima.*(Ig>limit);
 subplot(2,2,4);
 imagesc(Ig_local_cut);
 
-subplot(2,2,4);
-plot(Ig3(m,:))
+% subplot(2,2,4);
+% plot(Ig3(m,:))
+
+disp('about to save, ctrl-c or space')
+pause;
+save('e2data')
 

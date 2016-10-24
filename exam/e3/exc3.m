@@ -138,6 +138,12 @@ SE = strel('diamond',R);
 subplot(2,2,4)
 imagesc(morph);
 
+figure(5)
+labeled = bwlabel(morph, 8);
+imagesc(labeled);
+str = sprintf('Number of labels: %d', max(max(labeled)));
+title(str);
+
 
 
 % SE = strel('disk',R,N);

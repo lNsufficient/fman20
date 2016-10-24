@@ -25,6 +25,9 @@ I(indI) = 0;
 %om talet är långt bort så har det liten sannolikhet att tillhöra
 %siffrorna. 
 
+%En annan tanke är att kolla på derivatan för området, och leta efter ett
+%platt område, men jag tror inte det är lika bra. 
+
 %I(:,:,1) = y(:,:,1);
 %I(:,:,2) = y(:,:,2);
 %I(:,:,3) = y(:,:,3);

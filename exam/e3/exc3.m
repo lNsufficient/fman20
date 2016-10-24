@@ -12,7 +12,7 @@ colormap('gray')
 [y, x] = ndgrid(1:m,1:n); %origo bottom left corner
 
 %guessing for a function describing intensity of background;
-alpha = 13;
+alpha = 15;
 %alpha = 45;
 r = n/cosd(alpha);
 t = linspace(0,r);
@@ -23,9 +23,23 @@ ys = t*sind(alpha);
 hold on;
 plot(xs, ys, 'r')
 
-t0 = 0.5; %intensitet i övre vänstra hörnet
+startArea = I(1:13, 1:35);
+t0 = mean(mean(startArea));
+t0 = 0.5367; %intensitet i övre vänstra hörnet
+t0 = 0.475
+
+
+endArea = I(100:130, 488:503);
+tf = mean(mean(endArea))
+tf = 0.78;
+%tf = 0.9284;
+
+t0 = 0.48;
+tf = 0.76955;
+tf = 0.7695;
+tf = 0.77
+
 m = t0;
-tf = 0.86;
 k = (tf - m)/r;
 intensity_f = @(t) m+k*t;
 
@@ -56,65 +70,96 @@ segmented = (I < intensityIm);
 imagesc(segmented)
 colormap('gray')
 
-
+subplot(2,2,4)
+imagesc(endArea);
+colormap('gray')
 
 gradientLine = @(x, y) a*x + b*y;  
 
 %%
 
 figure(3);
-subplot(2,3,1)
-imagesc(I)
+subplot(2,2,1)
+imagesc(segmented)
 colormap('gray')
 
 
 %Segmentering med hjälp av bara en threshold funkade inte, så jag testar
 %att göra olika för olika kolonner i bilden, man ser ju att den skiftar i
 %ljus. 
-meanIntensity = mean(I);
-
-thresIm = zeros(size(I));
-n = size(I, 2);
-for j = 1:n
-    thresIm(:,j) = I(:,j) < meanIntensity(j);
-end
+% % meanIntensity = mean(I);
+% % 
+% % thresIm = zeros(size(I));
+% % n = size(I, 2);
+% % for j = 1:n
+% %     thresIm(:,j) = I(:,j) < meanIntensity(j);
+% % end
 
 
 % n = 30;
 % m = n;
 % smooth = 1/(n*m)*ones(m,n);
 % Ig = conv2(I, smooth);
-subplot(2,3,2)
-imagesc(thresIm);
+subplot(2,2,2)
+inverseSegmented = segmented == 0;
+imagesc(inverseSegmented);
+
+subplot(2,2,3)
+inverseLabels = bwlabel(inverseSegmented,8);
+maxIsland = max(max(inverseLabels));
+h = hist(inverseLabels(:), 1:maxIsland);
+[~, bgLabel] = max(h);
+background = inverseLabels == bgLabel;
+blackBg = (background==0);
+imagesc(blackBg);
+colormap('gray')
 
 
-R = 7;
+
+R = 2;
 N = 0;
 SE = strel('disk',R,N);
-morph1 = imopen(thresIm, SE);
-subplot(2,3,3)
-imagesc(morph1);
-
-R = 5;
+SE = strel('diamond',R);
+morph = blackBg;
+%morph = imopen(blackBg, SE);
+R = 2;
+N = 0;
+SE = strel('diamond',R);
+morph = imerode(morph, SE);
+R = 2;
+N = 0;
+SE = strel('diamond',R);
+morph = imerode(morph, SE);
+R = 1;
 N = 0;
 SE = strel('disk',R,N);
-morph2 = imerode(morph1, SE);
-subplot(2,3,4);
-imagesc(morph2);
+SE = strel('diamond',R);
+%morph = imopen(blackBg, SE);
+subplot(2,2,4)
+imagesc(morph);
 
-subplot(2,3,5);
-R = 5;
-N = 0;
-SE = strel('disk',R,N);
-morph3 = imerode(morph2, SE);
-imagesc(morph3)
 
-subplot(2,3,6);
-R = 10;
-N = 0;
-SE = strel('disk',R,N);
-morph4 = imerode(morph1, SE);
-imagesc(morph4)
+
+% SE = strel('disk',R,N);
+% %SE = strel('cube',R);
+% %SE = strel('diamond',R);
+% morph = imopen(segmented, SE);
+% subplot(2,2,4)
+% imagesc(morph);
+
+% subplot(2,3,5);
+% R = 1;
+% N = 0;
+% SE = strel('disk',R,N);
+% morph = imerode(segmented, SE);
+% imagesc(morph)
+% 
+% subplot(2,3,6);
+% R = 1;
+% N = 0;
+% SE = strel('disk',R,N);
+% morph4 = imopen(morph, SE);
+% imagesc(morph4)
 
 
 

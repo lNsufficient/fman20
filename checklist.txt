@@ -1,0 +1,17 @@
+The Course
+F1 - Introduction, image models, interpolation, transformations
+F2 - Linear algebra on images, Fourier transform
+F3 - Linear filters, convolution
+F4 - Scale space theory, edge detection
+F5 - Machine learning 1
+F6 - Texture
+F7 - Multispectral Imaging
+F8 - Segmentation: Fitting
+F9 - Machine learning 2
+F10 - Applications 1
+F11 - Segmentatoin: Clustering and graph cuts
+F12 - Applications 2: System building, benchmarking, big data.
+F13 - Statistical Image Analysis
+F14 - Computer Vision
+F15 - Medical Image Analysis.
+F16 - extra.

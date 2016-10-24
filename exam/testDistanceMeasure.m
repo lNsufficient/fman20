@@ -1,0 +1,14 @@
+xs = linspace(-2, 2);
+abc = [1 -1 0];
+ys = calcYs(abc,xs);
+dy = 0.2;
+dx = -dy;
+expectedDist = sqrt(dy^2 + dx^2);
+ind = 1:5:100;
+ys(ind) = ys(ind) + dy;
+xs(ind) = xs(ind) + dx;
+[close, dists] = calcDistances(abc, xs, ys, 0.1, [1 2]);
+clf;
+plot(xs, ys, 'o');
+hold on;
+plot(xs([2 99]), ys([2 99]), 'r');

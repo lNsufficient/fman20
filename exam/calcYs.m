@@ -8,6 +8,7 @@ if (abc(2) == -1)
     Y = abc(1)*X + abc(3);
 else
     disp('abc(2) is not -1')
+    abc
     Y = (abc(1)*X + abc(3))/(-abc(2));
 end
 end

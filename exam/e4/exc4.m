@@ -21,10 +21,23 @@ y0 = find(Y==0);
 X1 = X(:,y1);
 X0 = X(:,y0);
 
-figure(1);
-for i = 1:6
-    subplot(3,2,i)
-    hist(X0(i,:))
-end
+% figure(1);
+% for i = 1:6
+%     subplot(3,2,i)
+%     hist(X0(i,:))
+% end
+% figure(2);
+% subplot(2,1,1)
+% hist(X1(:))
+% subplot(2,1,2)
+% hist(X0(:))
 
-[m0, sig0] = normfit(X0');
+[mu0, sigma0]= estimateGauss(X0, 1);
+[mu1, sigma1]= estimateGauss(X1, 1);%båda stämmer väl med histogrammen
+
+pxForClass0 = normpdf(x,mu0,sigma0);
+pxForClass1 = normpdf(x,mu1,sigma1);
+
+%nu finns sannolikhet för sex olika tal. Hur stor är sannolikheten att x
+%tillhör den givna klassen. p(xi | classj) = normpdf(xi, muji, sigmaj), 
+%p(x | classj) = p(x1 | classj)

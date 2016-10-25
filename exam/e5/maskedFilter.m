@@ -4,7 +4,4 @@ function I = maskedFilter(I, indI, filter)
 
 Ifiltered = imfilter(I, filter, 'same');
 I(indI) = Ifiltered(indI);
-
-
 end
-

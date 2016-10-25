@@ -145,6 +145,7 @@ U1 = sqrt(sum(Xi.^2,3));
 patch = basis7;
 patch = flipud(fliplr(patch));
 U2 = conv2(conj(I),patch,'same');
+U2 = abs(U2)
 
 U3 = sqrt(sum(U.^2-U1.^2-U2.^2,3));
 

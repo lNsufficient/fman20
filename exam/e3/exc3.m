@@ -167,5 +167,43 @@ title(str);
 % morph4 = imopen(morph, SE);
 % imagesc(morph4)
 
+%% Removing of white blood cells
+% After checking some images on google, I found that the two wierd looking
+% blobs probably are white blood cells. I will now try to identify them.
 
+withe_background = I;
+withe_background(background == 1) = 1;
 
+figure(6)
+subplot(2,2,1)
+imagesc(without_background);
+colormap('gray')
+
+subplot(2,2,2)
+lim = 0.350;
+white_blood_cells = without_background < lim;
+SE = strel('disk',1,0);
+white_blood_cells = imerode(white_blood_cells, SE);
+imagesc(white_blood_cells);
+
+subplot(2,2,3)
+labelOverlap = labeled.*white_blood_cells;
+white_blood_cell_labels = unique(labelOverlap);
+%Det visade sig att jag bara fick med två labels, alltså de rätta. Hade jag
+%råkat få med för mycket hade jag behövt kolla på hist. Förmodligen hjälpte
+%imerode för att se till att jag inte fick med för mycket skräp.
+image(labelOverlap)
+
+subplot(2,2,4)
+label_without_white = labeled;
+for i = 1:length(white_blood_cell_labels)
+    label_without_white(labeled == white_blood_cell_labels(i)) = 0;
+end
+label_without_white = bwlabel(label_without_white);
+image(label_without_white)
+
+figure(7)
+bloodCells = max(max(label_without_white));
+image(label_without_white)
+str = sprintf('Number of labels: %d', bloodCells);
+title(str);

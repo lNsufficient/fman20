@@ -148,19 +148,33 @@ U2 = conv2(conj(I),patch,'same');
 
 U3 = sqrt(sum(U.^2-U1.^2-U2.^2,3));
 
+ud3 = U3 < 48;
+ud2 = U2 > 60;
+ud = ud2.*ud3;
+[dot_m, dot_n] = find(ud == 1);
+
 figure(6)
 subplot(3,2,1)
 imagesc(I);
+title('im')
 
 subplot(3, 2, 2)
 imagesc(U);
+title('|u|')
 
 subplot(3, 2, 3)
 imagesc(U1);
+title('|u1|')
 
 subplot(3, 2, 4)
 imagesc(U2);
 colormap('gray')
+title('|u2|')
 
 subplot(3, 2, 5)
 imagesc(U3);
+title('|u3|')
+
+subplot(3,2,6)
+imagesc(ud);
+title('center of dots')

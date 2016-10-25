@@ -1,5 +1,6 @@
 clear;
 load('tentadata2016okt.mat')
+addpath(genpath('maxflow')); %Jag använder samma fkn som i assignment 4.
 
 %I will try to solve this using maxflow in order to segment the text. When
 %that has been done I will try to extrapolate the image to the pieces where
@@ -21,9 +22,9 @@ y(:,:,2) = 255;
 y(:,:,3) = 0;
  
 %y(:,:,3) = 0; 
-l1 = I(:,:,1) - y(:,:,1);
-l2 = I(:,:,2) - y(:,:,2);
-l3 = I(:,:,3) - y(:,:,3);
+l1 = (double(I(:,:,1)) - double(y(:,:,1)));
+l2 = double(I(:,:,2)) - double(y(:,:,2));
+l3 = double(I(:,:,3)) - double(y(:,:,3));
 
 l1 = double(l1);
 l2 = double(l2);
@@ -34,8 +35,38 @@ yellowNorm = sqrt(l1.^2+l2.^2+l3.^2);
 % a2 = l2 == y(:,:,2);
 % a3 = l3 == y(:,:,3);
 maxYellowDist = 15.968715; %just by testing.
-maxYellowDist = 20;
+maxYellowDist = 130;
+x0 = maxYellowDist;
+k = 0.09;
+pbg = @(x) 1./(1+exp(-k*(x - x0)));
+py = @(x) 1-pbg(x);
+
+Py = py(yellowNorm);
+Pbg = pbg(yellowNorm);
+[m, n] = size(yellowNorm);
+neighbours = edges4connected(m, n);
+i = neighbours(:,1);
+j = neighbours(:,2);
+nu = 4;
+A = sparse(i, j, nu, m*n, m*n);
+T = [-log(Pbg(:)), -log(Py(:))];
+% T = T.^(1/4);
+fac = 10; 
+exp = 4;
+%T = [(Pbg(:)+1), (Py(:)+1)];
+%T = fac*T.^exp;
+T = sparse(T);
+[e, theta] = maxflow(A, T);
+theta = reshape(theta, m, n);
+theta = double(theta);
+invTheta = theta == 0;
+
 ind = find(yellowNorm < maxYellowDist);
+SE = strel('disk',2,0); %Det var nog bättre att ta bort lite för mycket
+%det hade varit dåligt om det blev en gul kant runt, för då kommer det gula
+%tillbaka då man smetar ut det övriga där det tidigare var gult.
+theta2 = imdilate(invTheta, SE);
+ind = find(theta2 == 1);
 %forgroundP = 
 
 indI = [ind; ind+m*n; ind+m*n*2];
@@ -61,7 +92,19 @@ I(indI) = 0;
 % [m, n] = find(overlap == 1);
 % I(m, n,:) = y*0;
 
+figure(1);
+subplot(2,2,1)
 image(I);
+subplot(2,2,2)
+imagesc(Py);
+colormap('gray')
+subplot(2,2,3)
+imagesc(theta);
+subplot(2,2,4)
 
-px = @(x) 1/(1+exp(x));
-x = linspace(0,max(max(yellowNorm)));
+
+
+
+x = linspace(0,255);
+y = py(x);
+plot(x, y)

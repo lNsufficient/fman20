@@ -3,14 +3,14 @@ load('tentadata2016okt.mat')
 
 I = im;
 
-normEd = @(u) sqrt(sum(sum(u.*u)));
+normEd = @(u) sqrt(sum(sum(conj(u).*u)));
 
 x = 141;
 y = 22;
 s = 6;
 I_small = I(x-s:x+s, y-s:y+s);
 I_small_norm = normEd(I_small);
-strI_small = sprintf('I\\_small, norm: %f', I_small_norm);
+strI_small = sprintf('u, norm: %f', I_small_norm);
 
 figure(1)
 image(I)
@@ -89,9 +89,12 @@ end
 %calculate |u3|:
 %Eftersom vi har 169 basvektorer och dimensionen av u är 169 så kommer vi
 %kunna avbilda u perfekt med hjälp av samtliga basvektorer (förutsatt att
-%de är ortogonala). Detta ger oss två sätt att beräkna u:
-u3 = I_small - up7 - up6;
+%de är ortogonala vilket de är enligt uppgiften). 
+% Detta ger oss två sätt att beräkna u:
+u3 = I_small - up7 - up6; %här är approachen att först beräkna vad u3 är 
+%för att sedan beräkna dess norm:
 u3n = normEd(u3);
+%här är approachen att |u1+u2+u3| = sqrt(|u1|^2+|u2|^2+|u3|^2) = |u|
 u3n2 = sqrt(I_small_norm^2 - up6n^2 - up7n^2);
 %Båda gav samma resultat: 36.0453
 
@@ -122,3 +125,42 @@ subplot(3,2,5)
 imagesc(u3)
 str = sprintf('u3, norm: %f', u3n)
 title(str)
+
+
+%%
+%beräkning av |u|
+II = conj(I).*I;
+patch = ones(13,13);
+U = sqrt(conv2(II,patch,'same'));
+
+[m, n] = size(I);
+Xi = zeros(m, n, 6);
+for i=1:6
+    patch = basis1to6(:,:,i);
+    patch = flipud(fliplr(patch));
+    Xi(:,:,i) = conv2(conj(I),patch,'same');
+end
+U1 = sqrt(sum(Xi.^2,3));
+
+patch = basis7;
+patch = flipud(fliplr(patch));
+U2 = conv2(conj(I),patch,'same');
+
+U3 = sqrt(sum(U.^2-U1.^2-U2.^2,3));
+
+figure(6)
+subplot(3,2,1)
+imagesc(I);
+
+subplot(3, 2, 2)
+imagesc(U);
+
+subplot(3, 2, 3)
+imagesc(U1);
+
+subplot(3, 2, 4)
+imagesc(U2);
+colormap('gray')
+
+subplot(3, 2, 5)
+imagesc(U3);

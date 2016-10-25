@@ -7,7 +7,7 @@ I = double(I)/255; %jag föredrar detta, så slipper man int.
 gaussEd = @(x,y,b) 1/(2*pi*b^2)*exp(-(x.^2+y.^2)/(2*b^2));
 dxgaussEd = @(x,y,b) -2*x/(2*b^2).*gaussEd(x,y,b);
 
-std = 60;
+std = 10;
 %Enligt https://en.wikipedia.org/wiki/Gaussian_blur så ska N vara ungefär
 %6*std. Jag tar i lite extra för att garantera.
 N = max(ceil(6*std)+1, 20);
@@ -24,17 +24,16 @@ title('original image');
 subplot(2,2,2);
 imagesc(edGaussx);
 colormap('gray');
-title('Gauss scale space representation of dx')
+title('Gauss scale dx')
 
 pause;
 Ig = conv2(I, edGaussx, 'same');
-Ig = abs(Ig);
 subplot(2,2,3);
 imagesc(Ig);
 colormap('gray');
-title('after convolving with image filter');
+title('Ig');
 
-
+Ig = abs(Ig);
 std = 3;
 N = max(ceil(6*std)+1, 20);
 [y, x] = ndgrid(-N:N,-N:N);
@@ -46,7 +45,7 @@ Ig2 = conv2(Ig, dx, 'same');
 subplot(2,2,4)
 imagesc(Ig2)
 colormap('gray');
-title('derivative of scale space representation of dx')
+title('dx of abs(Ig)')
 
 %%
 figure(2);
@@ -57,15 +56,19 @@ title('dx orig')
 m
 
 subplot(2,2,2);
-plot(Ig2(m,:),'o');
+plot(Ig2(m,2:end-1)); %Den sista punkten är så stor till beloppet och negativ.
 title('dxdx');
 
 subplot(2,2,3)
-title('local maxima in x-directoin of the absolute value of dx')
 TOL = 0.5e-6;
 Ig3 = conv2(Ig2, dx, 'same');
+plot(Ig3(m,3:end-2))
+title('dxdxdx');
+
+subplot(2,2,4)
 n = size(Ig2, 2);
-TOL2 = 0.4e-7; %används för att få bort inflektionspunkter
+TOL2 = 0.4e-7; %används för att få bort typ inflektionspunkter. Kan också användas för att bara få med de maxima som är tydligast.
+TOL2 = 0;
 Ig_local_max = find((abs(Ig2) < TOL).*(Ig3 < -TOL2)); 
 % local_m(local_n==1) = [];
 % local_n(local_n==1) = [];
@@ -78,18 +81,26 @@ Ig_local_max = find((abs(Ig2) < TOL).*(Ig3 < -TOL2));
 local_maxima = zeros(size(Ig2));
 local_maxima(Ig_local_max) = 1;
 imagesc(local_maxima);
+title('local maxima in x-direction')
 colormap('gray');
 
+figure(3)
+imagesc(local_maxima);
+title('local maxima in x-direction')
+
+figure(4)
 Ig_Max = min(max(Ig,[],2)); %the maxima for each row in Ig is at least this big.
 limit = Ig_Max*0.4;
 Ig_local_cut = local_maxima.*(Ig>limit);
-subplot(2,2,4);
 imagesc(Ig_local_cut);
+title('local maxima ONLY when Ig>limit')
 
 % subplot(2,2,4);
 % plot(Ig3(m,:))
 
 disp('about to save, ctrl-c or space')
+
+%%
 pause;
 save('e2data')
 

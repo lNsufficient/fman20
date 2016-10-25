@@ -70,7 +70,8 @@ ind = find(theta2 == 1);
 %forgroundP = 
 
 indI = [ind; ind+m*n; ind+m*n*2];
-I(indI) = 0;
+Icopy = I;
+Icopy(indI) = 0;
 
 %IDEER:
 %använd maxflow för att klassifiera.
@@ -94,17 +95,59 @@ I(indI) = 0;
 
 figure(1);
 subplot(2,2,1)
-image(I);
+image(Icopy);
 subplot(2,2,2)
 imagesc(Py);
 colormap('gray')
 subplot(2,2,3)
 imagesc(theta);
-subplot(2,2,4)
-
-
-
-
+subplot(2,2,4);
 x = linspace(0,255);
 y = py(x);
 plot(x, y)
+
+%% Nu har jag lyckats hitta theta2, som ger mig hela det gula text-området.
+%  Nästa steg är nu att försöka smeta ut den övriga bilden på det gula.
+npatch = 80;
+patch = ones(1,npatch);
+edges = 5;
+patch(edges:npatch-edges) = 0;
+patch = patch/sum(patch);
+Ipatch = maskedFilter(I, indI, patch);
+figure(2)
+subplot(2,2,1)
+image(Icopy);
+subplot(2,2,2)
+image(Ipatch);
+Ipatch2 = maskedFilter(Ipatch, indI, patch');
+subplot(2,2,3)
+image(Ipatch2);
+subplot(2,2,4)
+patch = eye(npatch);
+patch(edges:npatch-edges, edges:npatch-edges) = 0;
+patch = patch/sum(sum(patch));
+Ipatch3 = maskedFilter(Ipatch2, indI, patch);
+patch = flipud(patch);
+Ipatch3 = maskedFilter(Ipatch3, indI, patch);
+image(Ipatch3)
+
+
+%%
+
+Igauss = gaussFilter(I,100);
+
+IgaussMasked = I;
+IgaussMasked(indI) = Igauss(indI);
+Igauss2 = gaussFilter(IgaussMasked,20);
+IgaussMasked2 = I;
+IgaussMasked2(indI)= Igauss2(indI);
+
+figure(2)
+subplot(2,2,1)
+image(Icopy);
+subplot(2,2,2)
+image(IpatchMasked);
+subplot(2,2,3)
+image(IgaussMasked);
+subplot(2,2,4)
+image(IgaussMasked2);

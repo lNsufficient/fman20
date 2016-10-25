@@ -24,8 +24,4 @@ if plt %just to check
     figure(1);
     plot(x,y);
 end
-
-
-
 end
-

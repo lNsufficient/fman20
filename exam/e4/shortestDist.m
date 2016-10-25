@@ -5,4 +5,3 @@ dists = dist(x, X);
 [~, i] = sort(dists);
 k_closest = i(1:k);
 end
-

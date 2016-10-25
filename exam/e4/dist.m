@@ -8,4 +8,3 @@ diff = X - x_big;
 d = sqrt(sum(diff.^2));
 
 end
-

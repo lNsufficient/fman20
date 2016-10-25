@@ -131,23 +131,24 @@ patch = flipud(patch);
 Ipatch3 = maskedFilter(Ipatch3, indI, patch);
 image(Ipatch3)
 
+%% Nu är det gula borttaget, nu är det bara att snygga till lite.
+% make it smoooth
 
-%%
-
-Igauss = gaussFilter(I,100);
-
-IgaussMasked = I;
-IgaussMasked(indI) = Igauss(indI);
-Igauss2 = gaussFilter(IgaussMasked,20);
-IgaussMasked2 = I;
-IgaussMasked2(indI)= Igauss2(indI);
-
-figure(2)
+figure(3)
 subplot(2,2,1)
-image(Icopy);
-subplot(2,2,2)
-image(IpatchMasked);
-subplot(2,2,3)
-image(IgaussMasked);
+image(Ipatch3);
+gf = ones(16); gf(3:5,3:5) = 0; gf = gf/sum(sum(gf));
+Ismooth = maskedFilter(Ipatch3, indI, gf);
+subplot(2,2,2);
+image(Ismooth);
+
+gf = gaussFilter(2);
+Igauss = maskedFilter(Ismooth, indI, gf);
+subplot(2,2,3);
+image(Igauss);
+
 subplot(2,2,4)
-image(IgaussMasked2);
+gs = ones(14); gs = gs/sum(sum(gs));
+Ismooth = maskedFilter(Ipatch3, indI, gf);
+image(Ismooth);
+
